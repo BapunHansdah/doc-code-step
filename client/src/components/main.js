@@ -39,6 +39,8 @@ function Main(){
     const [willImportfile,setWilImportFile] = useState(false)
 
     const [showEditor , setShowEditor] = useState(false)
+    const [showNavBar , setShowNavBar] = useState(false)
+
 
 
 
@@ -266,7 +268,7 @@ function Main(){
       exp(exploreData)
  }
 
-    console.log(paths)
+    // console.log(paths)
 
     function importdata(){
     	setWilImportFile(!willImportfile)
@@ -290,14 +292,18 @@ function Main(){
     setShowEditor(false)
  }
 
- console.log(showEditor)
+ function navBar(){
+    setShowNavBar(!showNavBar)
+ }
+
+ // console.log(showEditor)
 
 	return(	
 		<>
            <div className="max-w-full h-screen bg-lime-200">
-              <div className="flex flex-col md:flex-row grid-cols-1 md:grid-cols-2 h-full shadow bg-black">
+              <div className="flex flex-col md:flex-row grid-cols-1 md:grid-cols-2 h-full shadow bg-black ">
                 {/*leftbar*/}
-	           	   <div className="md:w-2/12 overflow-scroll scrollbar flex flex-row md:flex-col">
+	           	   <div className="md:w-2/12 overflow-scroll scrollbar flex flex-row md:flex-col h-[10vh]">
 	           	     {
 	           	     	step.map((s,ind)=>{
 	           	     		return (
@@ -325,7 +331,7 @@ function Main(){
 	           	       </form>
 	           	   </Modal>
 	           	   {/*rightbar*/}
-	           	   <div className="md:w-10/12 pl-1">
+	           	   <div className="md:w-10/12 pl-1 h-[80vh]">
 	           	      <div className='bg-gray-900 p-3'>
 	           	         <div><h1 className="text-2xl font-bold text-white">{step[stepselect].title}</h1></div>
 	           	         <div><p className="text-sm text-gray-600">{step[stepselect].description}</p></div>
@@ -336,7 +342,10 @@ function Main(){
                         <div className={`p-2 ${showEditor ? "bg-red-700":""}`} onClick={showEditorTab}>editor</div>
                       </div>
                       </div>
-	           	      <div className="flex">
+
+
+	           	      <div className="flex max-h-[80vh] h-screen">
+
 	           	      	 <div className={`bg-[#3d3d3d] w-full overflow-auto resize-x ${showEditor?"hidden":""} md:block`}>
 	           	      	       <div className="font-bold text-white bg-black p-1 shadow border-r">Files</div>
 	           	      	       <div className="p-1">  	
@@ -345,6 +354,7 @@ function Main(){
 	           	      	       }                  	      	       
 	           	      	       </div>
 	           	      	 </div>
+
 	           	      	 <div className={`bg-black w-full overflow-auto ${!showEditor?"hidden":""} md:block`}>
 	           	      	      <div className="flex p-1 justify-between">
 	           	      	       <div className="text-white pl-5 flex items-center"><div className="flex gap-2 items-center text-xs">{'/'+paths}<div className={`w-2 h-2 rounded-full flex items-center ${isSaved? "":"bg-red-500"}`}></div></div></div>
@@ -364,32 +374,36 @@ function Main(){
 
     	           	      	       </div>
                                </div>
-                               <div className="block md:hidden text-white pr-5 relative">
-                                  <div className="flex items-center"><GiHamburgerMenu size={20}/></div>
-                                  <div className="w-44 bg-black z-10 absolute flex justify-center">
-                                      <div className="text-white pr-5 flex-col flex gap-2 gap-2 w-full justify-center items-center">
-                                       <label htmlFor="file-upload" class="custom-file-upload w-full flex justify-center bg-gray-800 px-2 rounded">
-                                           open
-                                       </label>
-                                       <input className="text-sm flex justify-center w-full" id="file-upload" type="file" name="file-upload" onChange={(e) => showFile(e)} />
-                                       <button onClick={editCode} className="bg-gray-800 w-full px-2 rounded flex justify-center">{!readonly?"Read" :"Edit"}</button>
-                                       <button onClick={saveCode} className="bg-gray-800 w-full px-2 rounded flex justify-center">Save</button> 
-                                       <a download="filename.json"
-                                            href={`data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(step))}`}
-                                            className="bg-gray-800 px-2 rounded w-full flex justify-center">Download
-                                        </a> 
+                               <div className="block md:hidden text-white relative">
+                                  <div className="flex items-center" onClick={navBar}><GiHamburgerMenu size={20}/></div>
+                                  <div className={!showNavBar ? "hidden": "block"}>
+                                  <div className="right-0 w-44 bg-black z-10 absolute flex items-center justify-center">
+                                    <div className="text-white p-3 flex-col flex gap-2 gap-2 w-full justify-center items-center">
+                                           <label htmlFor="file-upload" class="custom-file-upload w-full flex justify-center bg-gray-800 px-2 rounded">
+                                               open
+                                           </label>
+                                           <input className="text-sm flex justify-center w-full" id="file-upload" type="file" name="file-upload" onChange={(e) => showFile(e)} />
+                                           <button onClick={editCode} className="bg-gray-800 w-full px-2 rounded flex justify-center">{!readonly?"Read" :"Edit"}</button>
+                                           <button onClick={saveCode} className="bg-gray-800 w-full px-2 rounded flex justify-center">Save</button> 
+                                           <a download="filename.json"
+                                                href={`data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(step))}`}
+                                                className="bg-gray-800 px-2 rounded w-full flex justify-center">Download
+                                            </a> 
                                    </div>
                                
+                                  </div>
                                   </div>
                                </div>
 
 	           	      	       </div>
-	           	      	       <div className="">
 
-	           	      	          {/*<EditorContainer>*/}
+                                  {/*<EditorContainer>*/}
+
+	           	      	       <div className="h-full">
+
 	           	      	                <Editor
 	           	      	                     id="editor"
-										     height="80vh"
+                                             height="100%"
 										     defaultLanguage="javascript"
 										     theme="vs-dark"
 										     onChange={handleChange}
