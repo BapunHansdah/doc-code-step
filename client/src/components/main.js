@@ -40,6 +40,8 @@ function Main(){
 
     const [showEditor , setShowEditor] = useState(false)
     const [showNavBar , setShowNavBar] = useState(false)
+    const [sideBarTab , setSidebarTab] = useState(false)
+
 
 
 
@@ -60,6 +62,7 @@ function Main(){
     	setStep(add_steps)
     	setCount(count+1)
     	setModal(false)
+        setSidebarTab(true)
     }
    
     function deleteStep(){
@@ -125,7 +128,9 @@ function Main(){
 
 
     function openModal(){
-    	setModal(true)
+        setSidebarTab(false)
+        setModal(true)
+
     }
 
     function closeModal(e) {
@@ -296,26 +301,32 @@ function Main(){
     setShowNavBar(!showNavBar)
  }
 
+ function sideBar(){
+    setSidebarTab(!sideBarTab)
+ }
+
  // console.log(showEditor)
 
 	return(	
 		<>
-           <div className="max-w-full h-screen bg-lime-200">
-              <div className="flex flex-col md:flex-row grid-cols-1 md:grid-cols-2 h-full shadow bg-black ">
+           <div className="max-w-full h-screen bg-lime-200 overflow-clip">
+              <div className="flex md:grid-cols-2 shadow bg-black relative">
                 {/*leftbar*/}
-	           	   <div className="md:w-2/12 overflow-scroll scrollbar flex flex-row md:flex-col h-[10vh]">
-	           	     {
-	           	     	step.map((s,ind)=>{
-	           	     		return (
-	           	                   <div key={s.step} onClick={()=>stepSelected(s.step)} className={`flex justify-between p-2 items-center ${stepselect !== s.step ? "bg-gray-900" : "bg-orange-500"} cursor-pointer m-1`}><h1 className="text-2xl text-white font-black">{`STEP ${s.step}`}</h1></div>
-	           	     			)
-	           	     	})
-	           	     }
-	           	      <div className="flex flex-row justify-center m-1 gap-1">
-	           	         <button onClick={openModal} className=" w-5 md:w-full text-white rounded bg-green-500 hover:bg-green-400">+</button>
-	           	         <button onClick={deleteStep} className={`w-5 md:w-full text-white rounded ${count ===1 ?"bg-red-200" : "bg-red-500"} hover:bg-red-400`} disabled={count ===1 ? true : false}>-</button>
-	           	      </div>    
-	           	   </div>
+                 <div className={`overflow-scroll z-10 bg-black bg-opacity-90 h-screen md:w-2/12 w-10/12 ${!sideBarTab ? "-left-[900px]":"left-0"} absolute md:static z-10 transition-all`}>
+    	           	       
+                         {
+    	           	     	step.map((s,ind)=>{
+    	           	     		return (
+    	           	                   <div key={s.step} onClick={()=>stepSelected(s.step)} className={`flex justify-between p-2 items-center ${stepselect !== s.step ? "bg-gray-900" : "bg-orange-500"} cursor-pointer m-1`}><h1 className="text-2xl text-white font-black">{`STEP ${s.step}`}</h1></div>
+    	           	     			)
+    	           	     	})
+    	           	     }
+    	           	      <div className="flex flex-row justify-center m-1 gap-1">
+    	           	         <button onClick={openModal} className="w-full text-white rounded bg-green-500 hover:bg-green-400">+</button>
+    	           	         <button onClick={deleteStep} className={`w-full text-white rounded ${count ===1 ?"bg-red-200" : "bg-red-500"} hover:bg-red-400`} disabled={count ===1 ? true : false}>-</button>
+    	           	      </div>   
+                          
+                   </div>
 	           	   <Modal className="max-w-[400px] mt-20 mx-auto bg-orange-500 rounded" isOpen={modal}>
 	           	       <form className="flex flex-col p-5 gap-2" onSubmit={addStep}>
 	           	          <input onChange={addHandleChange} name='title' className="p-2" placeholder='title'/>
@@ -331,22 +342,34 @@ function Main(){
 	           	       </form>
 	           	   </Modal>
 	           	   {/*rightbar*/}
-	           	   <div className="md:w-10/12 pl-1 h-[80vh]">
-	           	      <div className='bg-gray-900 p-3'>
-	           	         <div><h1 className="text-2xl font-bold text-white">{step[stepselect].title}</h1></div>
-	           	         <div><p className="text-sm text-gray-600">{step[stepselect].description}</p></div>
+	           	   <div className="flex flex-col w-full md:w-10/12 pl-1 ">
+
+	           	      <div className='bg-gray-900 p-3 flex justify-between w-full'>
+                        <div>
+	           	          <div><h1 className="text-2xl font-bold text-white">{step[stepselect].title}</h1></div>
+	           	          <div><p className="text-sm text-gray-600">{step[stepselect].description}</p></div>
+                         </div>
+                         <div>
+                            <div className="flex justify-center md:hidden" onClick={sideBar}>
+                             <div className="text-red-500 font-semibold text-5xl">|||</div>
+                            </div>
+                         </div>
 	           	      </div>
+
+
                       <div className="block md:hidden">
-                      <div className="text-white grid grid-cols-2 justify-center gap-2 ">
-                        <div className={`p-2 ${showEditor ? "":"bg-red-700"} `} onClick={showFileTab}>files</div>
-                        <div className={`p-2 ${showEditor ? "bg-red-700":""}`} onClick={showEditorTab}>editor</div>
+                          <div className="text-white grid grid-cols-2 justify-center gap-2 ">
+                            <div className={`p-2 ${showEditor ? "":"bg-red-700"} `} onClick={showFileTab}>files</div>
+                            <div className={`p-2 ${showEditor ? "bg-red-700":""}`} onClick={showEditorTab}>editor</div>
+                          </div>
                       </div>
-                      </div>
 
 
-	           	      <div className="flex max-h-[80vh] h-screen">
+	           	      <div className="flex grid-cols-2 h-screen">
 
-	           	      	 <div className={`bg-[#3d3d3d] w-full overflow-auto resize-x ${showEditor?"hidden":""} md:block`}>
+                         {/*explorer*/}
+
+	           	      	 <div className={`bg-[#3d3d3d]  h-[80vh] w-full md:w-44 overflow-auto resize-x ${showEditor?"hidden":""} md:block`}>
 	           	      	       <div className="font-bold text-white bg-black p-1 shadow border-r">Files</div>
 	           	      	       <div className="p-1">  	
 	           	      	       {          	      	       
@@ -355,7 +378,7 @@ function Main(){
 	           	      	       </div>
 	           	      	 </div>
 
-	           	      	 <div className={`bg-black w-full overflow-auto ${!showEditor?"hidden":""} md:block`}>
+	           	      	 <div className={`bg-black w-full overflow-auto ${!showEditor?"hidden":""} md:block overflow-clip h-[80vh]`}>
 	           	      	      <div className="flex p-1 justify-between">
 	           	      	       <div className="text-white pl-5 flex items-center"><div className="flex gap-2 items-center text-xs">{'/'+paths}<div className={`w-2 h-2 rounded-full flex items-center ${isSaved? "":"bg-red-500"}`}></div></div></div>
 	           	      	       <div className="hidden md:block">
@@ -399,8 +422,7 @@ function Main(){
 
                                   {/*<EditorContainer>*/}
 
-	           	      	       <div className="h-full">
-
+	           	      	       <div className="h-[80vh]">
 	           	      	                <Editor
 	           	      	                     id="editor"
                                              height="100%"
@@ -411,15 +433,11 @@ function Main(){
 										     onMount={handleEditorDidMount}
 										     options={{readOnly: readonly}}
 								         />
-	           	      	          {/*</EditorContainer>*/}
-	           	      	       	  {/*<Editor
-								     height="80vh"
-								     defaultLanguage="javascript"
-								     theme="vs-dark"
-								     onChange={handleChange}
-								     value={codeValue}
-								   />*/}
+                                                                         
+
 	           	      	       </div>
+
+
 	           	      	 </div>
 	           	      </div>
 	           	   </div>
