@@ -47,9 +47,10 @@ export default function Folders({
   function handleChange(e) {
     e.preventDefault();
     e.stopPropagation();
-    console.log(e.target.value);
     setEditedName(e.target.value);
   }
+
+
 
   return (
 
