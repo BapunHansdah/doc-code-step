@@ -23,52 +23,48 @@ Modal.setAppElement("#root");
 
 function Main() {
   const [step, setStep] = useState(()=>{
-    const init = JSON.parse(localStorage.getItem("step"))
-    return init || Data
-  });
-  const [count, setCount] = useState(1);
-  const [stepselect, setStepSelect] = useState(0);
-  const [modal, setModal] = useState(false);
-  const [stepData, setStepData] = useState(Data[0]);
-  const [exploreData, setExploreData] = useState(Data[0].data);
-  const [exploreContain, setExploreContain] = useState(Data[0].data.contains);
-  const [exploreContainCode, setExploreContainCode] = useState(
-    Data[0].data.contains[0].code
-  );
-  const [ExploreContainName, setExploreContainName] = useState("");
-  const [noteData,setNoteData] =useState(Data[0].notes)
-  const [isEditing, setIsEditing] = useState(false);
-  const [editId, setEditId] = useState(null);
-  const [newFileId, setNewFileId] = useState(null);
-  const [fileSelectedId, setFileSelectedId] = useState(2);
-  const [codeValue, setCodeValue] = useState(Data[0].data.contains[0].code);
-  const [fileContainCode, setFileContainCode] = useState(
-    Data[0].data.contains[0].code
-  );
-  const [editedName, setEditedName] = useState("");
-  const [fileSelectedName, setFileSelectedName] = useState(
-    Data[0].data.contains[0].name
-  );
-  const [currentCode, setCurrentCode] = useState("index.js");
-  const [readonly, setReadOnly] = useState(true);
-  const [isSaved, setIsSaved] = useState(true);
-  const [paths, setPaths] = useState("root/index.js");
-  const [willImportfile, setWilImportFile] = useState(false);
+    return JSON.parse(localStorage.getItem('step')) || Data
+  }); //1
+  const [count, setCount] = useState(1);  //2
+  const [stepselect, setStepSelect] = useState(0);  //3
+  const [modal, setModal] = useState(false);  //4
+  const [stepData, setStepData] = useState({});  //5
+  const [exploreData, setExploreData] = useState(Data[0].data);  //6
+  const [exploreContain, setExploreContain] = useState([]);  //7
+  const [exploreContainCode, setExploreContainCode] = useState("");  //8
+  const [ExploreContainName, setExploreContainName] = useState("");  //9
+  const [noteData,setNoteData] =useState("")  //10
+  const [isEditing, setIsEditing] = useState(false);  //11
+  const [editId, setEditId] = useState(null);  //12
+  const [newFileId, setNewFileId] = useState(null);  //13
+  const [fileSelectedId, setFileSelectedId] = useState(1);  //14
+  const [codeValue, setCodeValue] = useState("");  //15
+  const [fileContainCode, setFileContainCode] = useState("");  //16
+  const [editedName, setEditedName] = useState("");  //17
+  const [isNewFile, setIsNewFile] = useState("");  //18
+  const [updatedPath, setUpdatePath] = useState("");  //19
+  const [fileSelectedName, setFileSelectedName] = useState("");  //20
+  const [currentCode, setCurrentCode] = useState("");  //21
+  const [readonly, setReadOnly] = useState(true);  //22
+  const [isSaved, setIsSaved] = useState(true);  //23
+  const [paths, setPaths] = useState("");  //24
+  const [willImportfile, setWilImportFile] = useState(false);  //25
 
-  const [showEditor, setShowEditor] = useState(false);
-  const [showNavBar, setShowNavBar] = useState(false);
-  const [sideBarTab, setSidebarTab] = useState(false);
-  const [showNote, setShowNote] = useState(false);
-  const [ fileExtension,setFileExtension] = useState("javascript")
-  const [languages,setLanguages] = useState()
-  const [notes,setNotes] = useState("")
-  const [showtextEditor,setShowtextEditor] = useState(false)
-  const editorRef = useRef(null);
+  const [showEditor, setShowEditor] = useState(false);  //26
+  const [showNavBar, setShowNavBar] = useState(false);  //27
+  const [sideBarTab, setSidebarTab] = useState(false);  //28
+  const [showNote, setShowNote] = useState(true);  //29
+  const [ fileExtension,setFileExtension] = useState("javascript")  //30
+  const [languages,setLanguages] = useState()  //31
+  const [notes,setNotes] = useState("")  //32
+  const [showtextEditor,setShowtextEditor] = useState(false)  //33
+  const editorRef = useRef(null);  //34
+  const[isfileSelected,setIsfileSelected] = useState(false)
 
 
   function addStep(e) {
     e.preventDefault();
-    console.log();
+    
     const add_steps = [
       ...step,
       {
@@ -115,29 +111,44 @@ function Main() {
     setEditedName("");
     setShowtextEditor(false)
     setNoteData(step[stepselect].notes)
+    saveCode();
   }
 
 
+   useEffect(()=>{
+     
+      localStorage.setItem('step',JSON.stringify(step))
+     
+  },[step,isSaved])
 
-  useEffect(()=>{
-     console.log("saved")
-     localStorage.setItem('step',JSON.stringify(step))
-  },[step,exploreData,exploreContain,exploreContainCode,noteData,notes,codeValue,currentCode])
 
 
-  //console.log(step)
+  // useEffect(()=>{
+
+  //    const getSteps = );
+  //    setStep(getSteps || Data)
+     
+  // },[])
+
+
+ 
+
+ 
+
+  
 
   function saveCode() {
+    console.log('saved')
     setIsSaved(true);
     setEditId(null);
     setIsEditing(false);
     function exp(explore) {
       const code = explore.contains.map((m, i) => {
         if (fileSelectedId == m.id) {
-          return (m.code = currentCode);
+          setExploreContainCode(m.code = codeValue);
         }
       });
-      setExploreContainCode(code);
+      // setExploreContainCode(code)
 
       explore.contains &&
         explore.contains.map((m) => {
@@ -149,22 +160,24 @@ function Main() {
 
    function setValue(value, id, name, path) {
     saveCode();
+    setIsfileSelected(true)
     setCodeValue(value);
     setFileSelectedId(id);
     setFileSelectedName(name);
     setPaths(path);
-    
-
-    // setFileExtension(name.split('.').pop())
-    // if(name.split('.').pop === "js"){
-    //   return "javascript"
-    // }
-       languages.map(l=>{
+      languages && languages.map(l=>{
               if(l.extensions && l.extensions.includes('.'+name.split('.').pop())){
                 setFileExtension(l.id)
               }
           })
 
+  }
+
+  function handleChange(e) {
+    setCodeValue(e);
+    if (window.event.type !== "message") {
+      setIsSaved(false);
+    }
   }
 
   function openModal() {
@@ -193,6 +206,7 @@ function Main() {
     setIsEditing(true);
     setEditId(id);
     setEditedName("");
+    setIsNewFile(true)
   }
 
   function EditHandle(id, e, name) {
@@ -255,6 +269,7 @@ function Main() {
     exp(exploreData);
     setNewFileId(newId);
     createNewHandle(newId, e);
+    setFileSelectedName("")
   }
   
 
@@ -281,7 +296,10 @@ function Main() {
       const rename = explore.contains.map((m, i) => {
         if (id == m.id) {
           setExploreContainName((m.name = editedName));
-          setPaths((m.path = m.path + "/" + editedName));
+          if(isNewFile){
+             setPaths((m.path = m.path + "/" + editedName));
+             setIsNewFile(false)
+           }
         }
       });
 
@@ -291,28 +309,35 @@ function Main() {
         });
     }
     exp(exploreData);
+    setValue(e.target.value, id, editedName, paths)
+    setEditedName("")
   }
+
+
+
 
   function handleEditorDidMount(editor, monaco) {
-    editorRef.current = editor;
+    // editorRef.current = editor;
+    // editor.addCommand(
+    //   monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS ,
+    //   function (){
+    //     saveCode()
+    //   }
+    // )
+    // // editor.addAction({
+    // //   id: "executeCurrentAndAdvance",
+    // //   label: "Execute Block and Advance",
+    // //   keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS],
+    // //   contextMenuGroupId: "2_execution",
+    // //   run: () => {
+    // //     saveCode()
+    // //   },
+    // // });
     setLanguages(monaco.languages.getLanguages())
-    editor.addAction({
-      id: "executeCurrentAndAdvance",
-      label: "Execute Block and Advance",
-      keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS],
-      contextMenuGroupId: "2_execution",
-      run: () => {
-        saveCode();
-      },
-    });
+
   }
 
-    function handleChange(e) {
-    setCurrentCode(e);
-    if (window.event.type !== "message") {
-      setIsSaved(false);
-    }
-  }
+
 
     function editCode() {
     setReadOnly(!readonly);
@@ -378,6 +403,8 @@ function Main() {
   function showtextEditorTab() {
     setShowtextEditor(false)
   }
+
+
 
   return (
     <>
@@ -566,7 +593,7 @@ function Main() {
                 <div className="flex p-1 justify-between">
                   <div className="text-white pl-5 flex items-center">
                     <div className="flex gap-2 items-center text-xs">
-                      {"/" + paths}
+                      {"/" + paths.slice(0,paths.lastIndexOf('/')) +"/"+fileSelectedName}
                       <div
                         className={`w-2 h-2 rounded-full flex items-center ${
                           isSaved ? "" : "bg-red-500"
@@ -622,6 +649,10 @@ function Main() {
                 {/*<EditorContainer>*/}
 
                 <div className="h-[80vh]">
+                 {
+                  
+                  !isfileSelected ? <div className="text-white flex justify-center items-center h-full">Nothing selected</div>
+                  :
                   <Editor
                     id="editor"
                     height="100%"
@@ -632,6 +663,7 @@ function Main() {
                     onMount={handleEditorDidMount}
                     options={{ readOnly: readonly }}
                   />
+                }
                 </div>
               </div>
             </div>
