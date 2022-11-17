@@ -14,6 +14,7 @@ import { AiFillRead} from "react-icons/ai";
 import { RiBookReadFill } from "react-icons/ri";
 import { BiEdit} from "react-icons/bi";
 import { BiSave } from "react-icons/bi";
+import { MdAddBox } from "react-icons/md";
 import _ from "lodash"
 import ReactMarkdown from 'react-markdown'
 
@@ -23,13 +24,14 @@ Modal.setAppElement("#root");
 
 function Main() {
   const [step, setStep] = useState(()=>{
+    console.log(JSON.parse(localStorage.getItem('step')))
     return JSON.parse(localStorage.getItem('step')) || Data
   }); //1
   const [count, setCount] = useState(1);  //2
   const [stepselect, setStepSelect] = useState(0);  //3
   const [modal, setModal] = useState(false);  //4
   const [stepData, setStepData] = useState({});  //5
-  const [exploreData, setExploreData] = useState(Data[0].data);  //6
+  const [exploreData, setExploreData] = useState(step[0].data || Data[0].data);  //6
   const [exploreContain, setExploreContain] = useState([]);  //7
   const [exploreContainCode, setExploreContainCode] = useState("");  //8
   const [ExploreContainName, setExploreContainName] = useState("");  //9
@@ -60,6 +62,18 @@ function Main() {
   const [showtextEditor,setShowtextEditor] = useState(false)  //33
   const editorRef = useRef(null);  //34
   const[isfileSelected,setIsfileSelected] = useState(false)
+
+
+
+  // useEffect(()=>{
+  //   const getData = JSON.parse(localStorage.getItem('step')) || Data
+  //   setStep()
+  // },[])
+
+   useEffect(()=>{
+      console.log("saved to localStorage")
+       localStorage.setItem('step',JSON.stringify(step))       
+  },[step,exploreData,exploreContain,ExploreContainName,noteData,isSaved])
 
 
   function addStep(e) {
@@ -111,15 +125,13 @@ function Main() {
     setEditedName("");
     setShowtextEditor(false)
     setNoteData(step[stepselect].notes)
+    setIsfileSelected(false)
     saveCode();
+    setPaths("")
+    setFileSelectedName("")
   }
 
 
-   useEffect(()=>{
-     
-      localStorage.setItem('step',JSON.stringify(step))
-     
-  },[step,isSaved])
 
 
 
@@ -134,7 +146,10 @@ function Main() {
  
 
  
-
+  function newfile(){
+    setStep(Data)
+    localStorage.removeItem('step')
+  }
   
 
   function saveCode() {
@@ -159,6 +174,7 @@ function Main() {
   }
 
    function setValue(value, id, name, path) {
+
     saveCode();
     setIsfileSelected(true)
     setCodeValue(value);
@@ -175,6 +191,7 @@ function Main() {
 
   function handleChange(e) {
     setCodeValue(e);
+
     if (window.event.type !== "message") {
       setIsSaved(false);
     }
@@ -207,6 +224,7 @@ function Main() {
     setEditId(id);
     setEditedName("");
     setIsNewFile(true)
+    // setIsfileSelected(false)
   }
 
   function EditHandle(id, e, name) {
@@ -284,6 +302,9 @@ function Main() {
         });
     }
     exp(exploreData);
+    setEditedName("")
+    setPaths("")
+    setFileSelectedName("")
   }
 
 
@@ -298,7 +319,7 @@ function Main() {
           setExploreContainName((m.name = editedName));
           if(isNewFile){
              setPaths((m.path = m.path + "/" + editedName));
-             setIsNewFile(false)
+             setValue("", id, editedName, m.path)
            }
         }
       });
@@ -309,7 +330,6 @@ function Main() {
         });
     }
     exp(exploreData);
-    setValue(e.target.value, id, editedName, paths)
     setEditedName("")
   }
 
@@ -410,7 +430,7 @@ function Main() {
     <>
       <div className="max-w-full bg-gray-900  overflow-y-scroll ">
         <div className="flex md:grid-cols-2 shadow bg-black relative">
-          {/*leftbar*/}
+{/*--------------------------------- left bar ----------------------------------*/}
           <div
             className={`overflow-y-scroll z-10 bg-black bg-opacity-90 h-screen md:w-2/12 w-6/12 ${
               !sideBarTab ? "-left-[900px]" : "left-0"
@@ -447,8 +467,9 @@ function Main() {
               </button>
             </div>
           </div>
+{/*----------------------------------modal-------------------------------*/}
           <Modal
-            className="max-w-[400px] mt-20 mx-auto bg-orange-700 rounded"
+            className="max-w-[400px] mt-20 mx-auto bg-orange-500 rounded"
             isOpen={modal}
           >
             <form className="flex flex-col p-5 gap-2" onSubmit={addStep}>
@@ -457,14 +478,16 @@ function Main() {
                 name="title"
                 className="p-2"
                 placeholder="title"
+                required={true}
               />
               <textarea
                 onChange={addHandleChange}
                 name="description"
                 className="p-2"
                 placeholder="description"
+                required={true}
               />
-              <div className="flex gap-2 items-center text-white hover:text-orange-500">
+              <div className="flex gap-2 items-center text-white">
                 <input
                   type="checkbox"
                   name="import"
@@ -475,18 +498,19 @@ function Main() {
                   <span>import files from selected step</span>
                 </label>
               </div>
-              <button className="p-2 bg-black text-white hover:text-orange-500">save</button>
+              <button className="p-2 bg-black text-white">save</button>
               <button
-                className="p-2 bg-red-700 text-white hover:text-orange-500"
+                className="p-2 bg-red-700 text-white"
                 onClick={closeModal}
               >
                 cancel
               </button>
             </form>
           </Modal>
-          {/*rightbar*/}
+{/*---------------------------------rightbar--------------------------------------------*/}
           <div className="flex flex-col w-full md:w-10/12 pl-1">
             <div className="bg-gray-900 p-3 flex justify-between w-full">
+{/*----------------------------------short description section---------------------------------*/}
               <div>
                 <div>
                   <h1 className="text-2xl font-bold text-white">
@@ -499,17 +523,21 @@ function Main() {
                   </p>
                 </div>
               </div>
+{/*----------------------------------short description section---------------------------------*/}
+
+{/*-----------------------------------mobile side tab opener----------------------------*/}
               <div>
                 <div
                   className="flex justify-center md:hidden"
                   onClick={sideBar}
                 >
-                  <div className={` ${sideBarTab ? "text-orange-500" : "text-white hover:text-orange-500"} font-semibold text-5xl`}><TbSquareToggle/></div>
+                  <div className={` ${sideBarTab ? "text-orange-500" : "text-white"} font-semibold text-5xl`}><TbSquareToggle/></div>
                 </div>
               </div>
             </div>
-
+{/*---------------------------options-------------------------------------------------*/}
             <div className="p-2 bg-gray-800 flex gap-2">
+                   <button className="px-2 py-1 text-xs text-white hover:text-orange-500" onClick={newfile}><div className="flex items-center"><MdAddBox/>&nbsp; new</div></button>
                    <label
                         htmlFor="file-upload"
                         className="custom-file-upload px-2 py-1 text-white hover:text-orange-500 text-xs px-2"
@@ -532,9 +560,10 @@ function Main() {
                           >
                             <div className="flex items-center"><ImCloudDownload/> &nbsp; download</div>
                       </a>
-                   <button className="px-2 py-1 text-xs bg-white text-black" onClick={toggleNotes}>{ showNote ?"open note":"open code"}</button>
+                   <button className="px-2 py-1 text-xs bg-white text-black hover:bg-orange-500" onClick={toggleNotes}>{ showNote ?"open note":"open code"}</button>
             </div>
-
+{/*------------------------------options-----------------------------------------------------*/}
+{/*---------------------------------mobile tab section-------------------------------------------*/}
             <div className="block md:hidden">
               <div className="text-white grid grid-cols-2 justify-center gap-2 ">
                 <div
@@ -551,10 +580,11 @@ function Main() {
                 </div>
               </div>
             </div>
+{/*---------------------------------mobile tab section --------------------------------------------*/}
            <div className={showNote ? 'block': 'hidden'}>
             <div className={`flex grid-cols-2`}>
-              {/*explorer*/}
 
+{/*------------------------------explorer section --------------------------------------------------------*/}
               <div
                 className={`bg-[#3d3d3d]  h-[85vh] w-full md:w-64 overflow-auto resize-x ${
                   showEditor ? "hidden" : ""
@@ -584,7 +614,9 @@ function Main() {
                   }
                 </div>
               </div>
+{/*----------------------------explorer section--------------------------------------------------------*/}
 
+{/*-------------------------code editor section ---------------------------------------------------------*/}
               <div
                 className={`bg-black w-full overflow-auto ${
                   !showEditor ? "hidden" : ""
@@ -602,11 +634,9 @@ function Main() {
                     </div>
                   </div>
 
-                  {/*navbar*/}
+                  {/*editor option desktop*/}
                   <div className="hidden md:block">
-                    <div className="text-white hover:text-orange-500 pr-5 flex gap-2">
-                      {/*<button onClick={showFile} className="bg-gray-800 px-2 rounded">open</button>*/}
-                      
+                    <div className="text-white hover:text-orange-500 pr-5 flex gap-2">                      
                       <button
                         onClick={editCode}
                         className="text-white hover:text-orange-500 px-2 text-sm"
@@ -621,22 +651,23 @@ function Main() {
                       </button>
                     </div>
                   </div>
-                  <div className="block md:hidden text-white hover:text-orange-500 relative">
+                {/*editor option mobile*/}
+                  <div className="block md:hidden text-white relative">
                     <div className="flex items-center" onClick={navBar}>
                       <GiHamburgerMenu size={20} />
                     </div>
                     <div className={!showNavBar ? "hidden" : "block"}>
                       <div className="right-0 w-44 bg-black z-10 absolute flex items-center justify-center">
-                        <div className="text-white hover:text-orange-500 p-3 flex-col flex gap-2 gap-2 w-full justify-center items-center">
+                        <div className="text-white p-3 flex-col flex gap-2 gap-2 w-full justify-center items-center">
                           <button
                             onClick={editCode}
-                            className="bg-orange-700 text-white hover:text-orange-500 w-full px-2  flex justify-center text-sm"
+                            className="bg-orange-700 text-white  w-full px-2  flex justify-center text-sm"
                           >
                         {!readonly ? <div className="flex items-center gap-1"><AiFillRead/>read</div> : <div className="flex items-center gap-1"><BiEdit/>edit</div>}
                           </button>
                           <button
                             onClick={saveCode}
-                            className="bg-orange-700 text-white hover:text-orange-500 w-full px-2  flex justify-center text-sm"
+                            className="bg-orange-700 text-white  w-full px-2  flex justify-center text-sm"
                           >
                         <div className="flex gap-1 items-center"><BiSave/>save</div>
                           </button>
@@ -647,11 +678,10 @@ function Main() {
                 </div>
 
                 {/*<EditorContainer>*/}
-
                 <div className="h-[80vh]">
                  {
                   
-                  !isfileSelected ? <div className="text-white flex justify-center items-center h-full">Nothing selected</div>
+                  !isfileSelected ? <div className="text-white flex justify-center items-center h-full font-bold text-2xl">No file selected</div>
                   :
                   <Editor
                     id="editor"
@@ -666,15 +696,20 @@ function Main() {
                 }
                 </div>
               </div>
+{/*----------------------------------------editor setion ---------------------------------------------*/}
+
             </div>
             </div>
+{/*--------------------------------------note section-------------------------------------------------------------*/}
             <div className={`${showNote ? 'hidden': 'block'}  text-white`}>
                   <div className="font-bold text-white bg-black p-1 shadow border-r text-sm">
                 {!showtextEditor?"Notes":"Editor"}
                   </div>
                   <div className="h-[80vh] overflow-y-scroll mx-auto relative">
                    <div className="h-full bg-black">
+                      {/*notes*/}
                        <div className={`${!showtextEditor?"hidden":"block"}`}><textarea className="w-full text-white bg-[#2d2d2d] h-[80vh] p-3 border-none" value={notes} onChange={handleNoteInput}></textarea></div>
+                       {/*note editor*/}
                        <div className={`${showtextEditor?"hidden":"block"} text-white p-3 bg-[#1b1b1b]  h-[80vh]`}><ReactMarkdown>{step[stepselect].notes}</ReactMarkdown></div>
                    </div>
                    <span onClick={textEditor} className="fixed right-10 cursor-pointer hidden md:block bottom-10">{!showtextEditor ? <RiEditBoxFill size={40}/>:<RiBookReadFill size={39}/>}</span>

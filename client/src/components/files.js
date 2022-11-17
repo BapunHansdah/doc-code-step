@@ -55,6 +55,7 @@ export default function Folders({
   return (
 
     <div className="relative">
+    
     {/*file and Folders*/}
       <div className="text-white text-sm hover:bg-gray-500 px-2">
         {exploreData.isFolder ? (
@@ -92,6 +93,7 @@ export default function Folders({
                           ? "block"
                           : "hidden"
                       } w-full`}
+                      required={true}
                     />
                   </form>
                 </div>
@@ -138,6 +140,7 @@ export default function Folders({
                         ? "block"
                         : "hidden"
                     } w-full`}
+                    required={true}
                   />
                 </form>
               </div>
@@ -204,6 +207,7 @@ export default function Folders({
           </MenuItem>
         </ContextMenu>
       </div>
+
 {/*containers*/}
       <div className={`${expand ? "block" : "hidden"} pl-2  w-full`}>
         {exploreData.contains &&
