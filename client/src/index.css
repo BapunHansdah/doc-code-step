@@ -24,7 +24,7 @@ input[type="file"] {
  
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: black; 
+  background: ; 
 }
 
 /* Handle on hover */
@@ -43,3 +43,4 @@ textarea {
 
     resize: none; /*remove the resize handle on the bottom right*/
 }
+

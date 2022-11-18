@@ -9,6 +9,7 @@
   "main": "src/index.js",
   "dependencies": {
     "@monaco-editor/react": "^4.4.6",
+    "@tailwindcss/typography": "^0.5.8",
     "@tiptap/react": "^2.0.0-beta.202",
     "@tiptap/starter-kit": "^2.0.0-beta.202",
     "axios": "^0.27.2",
@@ -26,7 +27,8 @@
     "react-simple-code-editor": "^0.13.1",
     "redux": "4.1.0",
     "redux-persist": "6.0.0",
-    "redux-thunk": "2.3.0"
+    "redux-thunk": "2.3.0",
+    "tailwind-colors": "^1.1.0"
   },
   "devDependencies": {
     "@babel/runtime": "7.13.8",

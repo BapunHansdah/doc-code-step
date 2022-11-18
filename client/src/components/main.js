@@ -19,7 +19,6 @@ import _ from "lodash"
 import ReactMarkdown from 'react-markdown'
 
 
-
 Modal.setAppElement("#root");
 
 function Main() {
@@ -30,7 +29,7 @@ function Main() {
   const [count, setCount] = useState(1);  //2
   const [stepselect, setStepSelect] = useState(0);  //3
   const [modal, setModal] = useState(false);  //4
-  const [stepData, setStepData] = useState({});  //5
+  const [stepData, setStepData] = useState(step[0] || Data[0]);  //5
   const [exploreData, setExploreData] = useState(step[0].data || Data[0].data);  //6
   const [exploreContain, setExploreContain] = useState([]);  //7
   const [exploreContainCode, setExploreContainCode] = useState("");  //8
@@ -148,6 +147,12 @@ function Main() {
  
   function newfile(){
     setStep(Data)
+    setExploreData({'id':0,'parent_id':null,'name':'root','isFolder':true,'code':null,'path':'root','contains':[]})
+    setPaths("")
+    setFileSelectedName("")
+    setEditedName("");
+    setCodeValue("")
+    setIsfileSelected(false)
     localStorage.removeItem('step')
   }
   
@@ -706,11 +711,11 @@ function Main() {
                 {!showtextEditor?"Notes":"Editor"}
                   </div>
                   <div className="h-[80vh] overflow-y-scroll mx-auto relative">
-                   <div className="h-full bg-black">
+                   <div className="h-full">
                       {/*notes*/}
                        <div className={`${!showtextEditor?"hidden":"block"}`}><textarea className="w-full text-white bg-[#2d2d2d] h-[80vh] p-3 border-none" value={notes} onChange={handleNoteInput}></textarea></div>
                        {/*note editor*/}
-                       <div className={`${showtextEditor?"hidden":"block"} text-white p-3 bg-[#1b1b1b]  h-[80vh]`}><ReactMarkdown>{step[stepselect].notes}</ReactMarkdown></div>
+                       <div className={`${showtextEditor?"hidden":"block"} text-white p-3 bg-[#1b1b1b]  h-[80vh]`}><ReactMarkdown className="prose prose-headings:text-white">{step[stepselect].notes}</ReactMarkdown></div>
                    </div>
                    <span onClick={textEditor} className="fixed right-10 cursor-pointer hidden md:block bottom-10">{!showtextEditor ? <RiEditBoxFill size={40}/>:<RiBookReadFill size={39}/>}</span>
                   </div>
