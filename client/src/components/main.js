@@ -17,6 +17,7 @@ import { BiSave } from "react-icons/bi";
 import { MdAddBox } from "react-icons/md";
 import _ from "lodash"
 import ReactMarkdown from 'react-markdown'
+import rehypeRaw from 'rehype-raw'
 
 
 Modal.setAppElement("#root");
@@ -134,15 +135,7 @@ function Main() {
 
 
 
-  // useEffect(()=>{
 
-  //    const getSteps = );
-  //    setStep(getSteps || Data)
-     
-  // },[])
-
-
- 
 
  
   function newfile(){
@@ -701,7 +694,7 @@ function Main() {
                 }
                 </div>
               </div>
-{/*----------------------------------------editor setion ---------------------------------------------*/}
+{/*----------------------------------------editor section ---------------------------------------------*/}
 
             </div>
             </div>
@@ -713,9 +706,9 @@ function Main() {
                   <div className="h-[80vh] overflow-y-scroll mx-auto relative">
                    <div className="h-full">
                       {/*notes*/}
-                       <div className={`${!showtextEditor?"hidden":"block"}`}><textarea className="w-full text-white bg-[#2d2d2d] h-[80vh] p-3 border-none" value={notes} onChange={handleNoteInput}></textarea></div>
+                       <div className={`${!showtextEditor?"hidden":"block"}`}><textarea className="w-full text-white bg-[#2d2d2d] h-[80vh] p-3 border border-white" value={notes} onChange={handleNoteInput}></textarea></div>
                        {/*note editor*/}
-                       <div className={`${showtextEditor?"hidden":"block"} text-white p-3 bg-[#1b1b1b]  h-[80vh]`}><ReactMarkdown className="prose prose-headings:text-white">{step[stepselect].notes}</ReactMarkdown></div>
+                       <div className={`${showtextEditor?"hidden":"block"} text-white p-3 bg-[#1b1b1b] overflow-y-scroll w-full h-[80vh]`}><ReactMarkdown rehypePlugins={[rehypeRaw]} className="prose prose-headings:text-white prose-white max-w-none">{step[stepselect].notes}</ReactMarkdown></div>
                    </div>
                    <span onClick={textEditor} className="fixed right-10 cursor-pointer hidden md:block bottom-10">{!showtextEditor ? <RiEditBoxFill size={40}/>:<RiBookReadFill size={39}/>}</span>
                   </div>
