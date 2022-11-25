@@ -92,7 +92,7 @@ function Main() {
           path: "root",
           isFolder: true,
           code: null,
-          contains: willImportfile ? _.cloneDeep(exploreContain) : [],
+          contains: willImportfile ? _.cloneDeep(step[stepselect].data.contains) : [],
         },
       },
     ];
